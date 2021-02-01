@@ -1,0 +1,55 @@
+#!/bin/sh
+
+#script to do a backup of /etc and /home to Datenblock
+
+#diese drei Zeilen chekcen ob die Platte mounted ist
+if [ ! -d /run/media/markus/Datenblock ]; then
+	echo "NO DRIVE FOUND! Please make sure Datenblock is connected." ; exit 1
+fi
+
+#gibt Ausgabe in den Terminal und in die Log-datei
+echo "Backup sent to Datenblock on:" > /tmp/backup.log
+
+#schreibt datum in die Log-datei
+date >> /tmp/backup.log
+
+#gibt Ausgabe in den Terminal und in die Log-datei
+echo "
+Backing up /etc..." | tee -a /tmp/backup.log
+
+#befehl für das Backup
+#echo in Verbindung mit "tee" schreibt in den Terminal und in die Log-datei
+sudo rsync -av --delete /etc/ /run/media/markus/Datenblock/backup/arch/etc_backup/ 
+2>&1 | tee -a /tmp/backup.log
+
+#gibt Ausgabe in den Terminal und in die Log-datei
+echo "
+Backing up /home..." | tee -a /tmp/backup.log
+
+#befehl für das Backup
+#echo in Verbindung mit "tee" schreibt in den Terminal und in die Log-datei
+sudo rsync -av --delete /home/ /run/media/markus/Datenblock/backup/arch/home_backup/ 2>&1 | tee -a /tmp/backup.log
+
+#befehl für das Backup der package.list
+#echo in Verbindung mit "tee" schreibt in den Terminal und in die Log-datei
+echo "
+Pulling package.list to Datenblock..." | tee -a /tmp/backup.log
+#zieht die Liste der installierten Pakete
+sudo pacman -Qqe > /run/media/markus/Datenblock/backup/arch/package.list | tee -a /tmp/backup.log
+#zum wiederherstellen verwendet man pacman -S $(cat package.list) abhängigkeiten werden automatisch installiert
+#quelle: https://www.reddit.com/r/archlinux/comments/9a91mj/how_do_i_make_a_backup_of_my_archlinux_w_i3/?utm_source=reddit-android
+
+#gibt Ausgabe in den Terminal und in die Log-datei
+echo "------------------
+- All backed up! -
+------------------
+" | tee -a /tmp/backup.log
+
+#schreibt die Log-datei in das Zielverzeichniss des Backups und löscht sie vom ursprünglichen Ort
+cat /tmp/backup.log >> /run/media/markus/Datenblock/backup/arch/backup.log
+rm /tmp/backup.log
+sync
+
+exit
+
+#gesehen auf https://www.youtube.com/watch?v=NrMREB16YBo

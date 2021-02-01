@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#diese drei Zeilen chekcen ob der Stick gemountet ist
+if [ ! -d /run/media/markus/GOLDST ]; then
+	echo "NO DRIVE FOUND! Please make sure the Stick is connected." ; exit 1
+fi
+
+
+#gibt Ausgabe in den Terminal und in die Log-datei
+echo "Backup sent to ~/STICK/backup/GOLDST on:" > /tmp/backup.log
+
+#schreibt datum in die Log-datei
+date >> /tmp/backup.log
+
+#gibt Ausgabe in den Terminal und in die Log-datei
+echo "
+Backing up /run/media/markus/GOLDST..." | tee -a /tmp/backup.log
+
+#befehl für das Backup
+#echo in Verbindung mit "tee" schreibt in den Terminal und in die Log-datei
+sudo rsync -av --delete /run/media/markus/GOLDST /home/markus/STICK/backup/GOLDST
+2>&1 | tee -a /tmp/backup.log
+
+#gibt Ausgabe in den Terminal und in die Log-datei
+echo "---------------------
+- GOLDST backed up! -
+---------------------
+" | tee -a /tmp/backup.log
+
+#schreibt die Log-datei in das Zielverzeichniss des Backups und löscht sie vom ursprünglichen Ort
+cat /tmp/backup.log >> /home/markus/STICK/backup/GOLDST/backup.log
+cat /tmp/backup.log >> /run/media/markus/GOLDST/backup.log
+rm /tmp/backup.log
+sync
+
+exit

@@ -28,6 +28,7 @@ date >> /tmp/update.log
 #      check Internet       #
 #---------------------------#
 
+echo "knocking on Microsofts door..."
 check_internet()
 {
   tool='curl'

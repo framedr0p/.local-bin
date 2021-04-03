@@ -28,19 +28,18 @@ date >> /tmp/update.log
 #      check Internet       #
 #---------------------------#
 
-echo "knocking on Microsofts door..."
+echo "Checking Internet-Connection..."
 check_internet()
 {
-  tool='curl'
-  tool_opts='-s --connect-timeout 8'
-
-  if ! $tool $tool_opts https://microsoft.com/ > /dev/null 2>&1; then
-    err "You don't have an Internet connection!"
-  fi
-
-  return $SUCCESS
+        wget -q --spider https://google.com
+        if [ $? -eq 0 ]; then
+                echo "Ready to go!"
+        else
+                echo "You are OFFLINE!" ; exit 1
+        fi
 }
 
+check_internet
 
 #--------------------------#
 #     Snapshot - System    #

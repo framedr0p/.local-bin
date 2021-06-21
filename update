@@ -15,7 +15,7 @@ PACMAN=/usr/bin/pacman
 TRIZEN=/usr/bin/trizen
 CP=/usr/bin/cp
 REFLECTOR=/usr/bin/reflector
-
+FLATPAK=/usr/bin/flatpak
 
 ####################################################
 #------------------ LOGGING -----------------------#
@@ -61,6 +61,8 @@ $SUDO $CP /boot/initramfs-linux-zen.img /boot/initramfs-linux-zen-stable.img
 # -------------------------#
 #      Update System       #
 # -------------------------#
+$FLATPAK update
+
 $SUDO $REFLECTOR --verbose -l 5 -p https --sort rate --save /etc/pacman.d/mirrorlist
 $SUDO $PACMAN -Syu --color auto
 
